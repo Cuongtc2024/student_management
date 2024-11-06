@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'appuserpagecontroller.dart';
+import 'userpagecontroller.dart';
 
 // ignore: must_be_immutable
 class UserDetailsDialog extends StatelessWidget {
@@ -8,12 +8,12 @@ class UserDetailsDialog extends StatelessWidget {
   String name;  
   String mapo;
   String chepo;
-  String? currentUserRole;
+  String? roleOfCurrentUser;
   final TextEditingController nameController = TextEditingController();
   final TextEditingController mapoController = TextEditingController();
   final TextEditingController chepoController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
-  final AppUserPageController controller;
+  final UserPageController controller;
 
   UserDetailsDialog(
       {super.key,
@@ -22,7 +22,7 @@ class UserDetailsDialog extends StatelessWidget {
       this.name = "",
       this.mapo = "",
       this.chepo = "",
-      this.currentUserRole,
+      this.roleOfCurrentUser,
       required this.controller}) {
     nameController.text = name;
     mapoController.text = mapo;
@@ -36,7 +36,7 @@ class UserDetailsDialog extends StatelessWidget {
 
   AlertDialog addUser(context) {
     return AlertDialog(
-      title: currentUserRole == "Principal" 
+      title: roleOfCurrentUser == "Principal" 
       ? Text(
         'Thêm giáo viên',
         textAlign: TextAlign.center,

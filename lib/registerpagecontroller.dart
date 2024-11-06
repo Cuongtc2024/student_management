@@ -4,17 +4,15 @@ import 'package:flutter/material.dart';
 
 class RegisterPageController extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
-
   final TextEditingController passwordController = TextEditingController();
-
   final TextEditingController nameController = TextEditingController();
   
-  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseAuth auth = FirebaseAuth.instance;
 
   void register(BuildContext context) async {
     try {
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+          await auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );

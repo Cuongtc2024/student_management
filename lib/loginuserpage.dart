@@ -2,10 +2,9 @@
 
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
-
 import 'package:flutter_datatable/loginuserpagecontroller.dart';
-
 import 'package:flutter_datatable/registerpage.dart';
+import 'package:flutter_datatable/usermenupage.dart';
 
 // ignore: must_be_immutable
 class LoginUserPage extends StatefulWidget {
@@ -54,6 +53,12 @@ class _LoginUserPageState extends State<LoginUserPage> {
                       TextButton(
                           onPressed: () {
                             controller.login(context);
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => UserMenuPage(
+                                        role: controller.roleOfCurrentUser)),
+                            );
                           },
                           child: Text(
                             'Đăng nhập',
@@ -225,12 +230,3 @@ class _LoginUserPageState extends State<LoginUserPage> {
     );
   }
 }
-// class HomeScreen extends StatelessWidget {
-//   const HomeScreen({super.key});
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       appBar: AppBar(title: Text('Trang chính')),
-//       body: Center(child: Text('Đăng nhập thành công!')),
-//     );
-//   }}

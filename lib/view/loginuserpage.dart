@@ -2,9 +2,9 @@
 
 import 'package:flutter/material.dart';
 // ignore: depend_on_referenced_packages
-import 'package:flutter_datatable/loginuserpagecontroller.dart';
-import 'package:flutter_datatable/registerpage.dart';
-import 'package:flutter_datatable/usermenupage.dart';
+import 'package:flutter_datatable/controller/loginuserpagecontroller.dart';
+import 'package:flutter_datatable/view/registerpage.dart';
+import 'package:flutter_datatable/view/usermenupage.dart';
 
 // ignore: must_be_immutable
 class LoginUserPage extends StatelessWidget {

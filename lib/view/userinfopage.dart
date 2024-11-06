@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_datatable/userinfopagecontroller.dart';
+import 'package:flutter_datatable/controller/userinfopagecontroller.dart';
 import 'package:provider/provider.dart';
 
 class UserInfoPage extends StatelessWidget {
@@ -93,7 +93,7 @@ class UserInfoPage extends StatelessWidget {
                                                   color: Colors.white))),
                                           DataCell(Text(
                                               controller
-                                                  .listUsers[index].techerName
+                                                  .listUsers[index].teacherName
                                                   .toString(),
                                               style: TextStyle(
                                                   color: Colors.white))),

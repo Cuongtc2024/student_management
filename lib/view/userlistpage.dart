@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/currentuser.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
 import 'package:flutter_datatable/userdatasource.dart';
-import 'package:flutter_datatable/userdetailsdialog.dart';
-import 'package:flutter_datatable/userlistpagecontroller.dart';
+import 'package:flutter_datatable/view/userdetailsdialog.dart';
+import 'package:flutter_datatable/controller/userlistpagecontroller.dart';
+import 'package:flutter_datatable/constant/userlisttype.dart';
 import 'package:provider/provider.dart';
 
 class UserListPage extends StatelessWidget {
@@ -12,19 +13,18 @@ class UserListPage extends StatelessWidget {
   String principal = "Principal";
   String teacher = "Teacher";
 
-  String listName;
-  String? _role;
-  UserListPageController controller = UserListPageController();
-  UserListPage({super.key, required this.listName}) {
-    _role = CurrentUser().role;
-    controller.getListUser(listName);
+  UserListType type;
+  final _role = CurrentUser().role;
+  late UserListPageController controller;
+  UserListPage({super.key, required this.type}) {
+    controller = UserListPageController(type);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(listName == studentList
+          title: Text(type == UserListType.allstudents
               ? "Danh sách sinh viên"
               : "Danh sách giáo viên")),
       body: Row(
@@ -41,7 +41,7 @@ class UserListPage extends StatelessWidget {
                     children: [
                       Consumer<UserListPageController>(
                         builder: (context, controller, child) =>
-                            listName == studentList
+                            type == UserListType.allstudents
                                 ? buildStudentPage(context)
                                 : buildTeacherPage(context),
                       )

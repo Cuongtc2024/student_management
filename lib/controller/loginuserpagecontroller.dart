@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/currentuser.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
 
 class LoginUserPageController extends ChangeNotifier {
   final db = FirebaseFirestore.instance;
@@ -27,6 +27,7 @@ class LoginUserPageController extends ChangeNotifier {
             .get();
         CurrentUser().uid = user.uid;
         CurrentUser().role = snapshot.docs.first.get('role');
+        CurrentUser().name = snapshot.docs.first.get('na');
         print('role1' +  CurrentUser().role!);
       }
       return "";

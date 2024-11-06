@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/registerpagecontroller.dart';
+import 'package:flutter_datatable/controller/registerpagecontroller.dart';
 
 
 // ignore: must_be_immutable

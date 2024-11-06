@@ -4,8 +4,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/appuser.dart';
-import 'package:flutter_datatable/currentuser.dart';
+import 'package:flutter_datatable/modal/appuser.dart';
+import 'package:flutter_datatable/constant/constant.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
+
+import '../constant/userlisttype.dart';
 
 class UserListPageController extends ChangeNotifier {
   final db = FirebaseFirestore.instance;
@@ -14,102 +17,91 @@ class UserListPageController extends ChangeNotifier {
   final TextEditingController teacherNameToFilterController =
       TextEditingController();
 
-  String? _uid;
-  String? _role;
+  final _uid = CurrentUser().uid;
+  final _role = CurrentUser().role;
   List<AppUser> _filteredUsers = [];
   List<AppUser> get filteredUsers => _filteredUsers;
   List<String> fieldsToDelete = ["role", "teid", "tena", "mapo", "chepo"];
 
-  String studentList = "Student List";
-  String teacherList = "Teacher List";
-  String student = "Student";
-  String principal = "Principal";
-  String teacher = "Teacher";
-  
+  final UserListType type;
 
-  UserListPageController() {
-    _uid = CurrentUser().uid;
-    _role = CurrentUser().role;
-    print("role2$_role");
+  UserListPageController(this.type) {
+    getListUser(type);
     _filteredUsers = listUsers;
   }
 
-  Future<void> getListUser(String selectedNameOfUserList) async {
-    db
-        .collection("appusers")
-        .where("role", whereIn: [student, teacher])
-        .get()
-        .then((snapshot) {
-          listUsers.clear();
-          for (var docUser in snapshot.docs) {
-            AppUser appUser = AppUser(
-              id: docUser.id,
-              techerId: docUser.data()["teid"],
-              techerName: docUser.data()["tena"],
-              role: docUser.data()["role"],
-              uid: docUser.data()["uid"],
-              email: docUser.data()["email"],
-              name: docUser.data()["na"],
-              chemistpoint: docUser.data()["chepo"],
-              mathpoint: docUser.data()["mapo"],
-            );
+  Future<void> getListUser(UserListType type) async {
+    Query query = db.collection("appusers");
+    if (type == UserListType.studentsofteacher) {
+      query = query.where("teid", isEqualTo: _uid);
+    } else if (type == UserListType.teachers) {
+      query = query.where("role", isEqualTo: "Teacher");
+    } else if (type == UserListType.allstudents) {
+      query = query.where("role", isEqualTo: "Student");
+    }
 
-            // Kiểm tra điều kiện và thêm vào danh sách nếu phù hợp
-            if ((_role == principal &&
-                    selectedNameOfUserList == studentList &&
-                    appUser.role == student) ||
-                (_role == principal &&
-                    selectedNameOfUserList == teacherList &&
-                    appUser.role == teacher) ||
-                (_role == teacher &&
-                    appUser.role == student &&
-                    appUser.techerId == _uid)) {
-              listUsers.add(appUser);
-            }
-          }
-          print("getListUser");
-          notifyListeners();
-        })
+    query.get().then((snapshot) {
+      listUsers.clear();
+      for (var docUser in snapshot.docs) {
+        AppUser appUser;
+        if (type == UserListType.allstudents) {
+          appUser = AppUser(
+            id: docUser.id,
+            teacherID: docUser.get("teid"),
+            teacherName: docUser.get("tena"),
+            role: docUser.get("role"),
+            uid: docUser.get("uid"),
+            email: docUser.get("email"),
+            name: docUser.get("na"),
+            chemistpoint: docUser.get("chepo"),
+            mathpoint: docUser.get("mapo"),
+          );
+        } else {
+          appUser = AppUser(
+            id: docUser.id,
+            role: docUser.get("role"),
+            uid: docUser.get("uid"),
+            email: docUser.get("email"),
+            name: docUser.get("na"),
+          );
+        }
+
+        listUsers.add(appUser);
+      }
+      print("getListUser");
+      notifyListeners();
+    })
         // ignore: invalid_return_type_for_catch_error
         .catchError((error) => print("Error completing: $error"));
   }
 
   Future<void> addAppUser(BuildContext context, {required String email}) async {
-    String? teacherName;
     Map<String, dynamic> updateData = {};
-
-    if (_role == teacher) {
-      QuerySnapshot snapshot = await db
-          .collection('appusers')
-          .where('uid', isEqualTo: _uid)
-          .get();
-      teacherName = snapshot.docs.first.get('na');
-    }
 
     QuerySnapshot snapshot =
         await db.collection('appusers').where('email', isEqualTo: email).get();
     for (var doc in snapshot.docs) {
       switch (_role) {
-        case "Principal":
-          updateData = {"role": teacher};
+        case Constant.ROLE_PRINCIPLE:
+          updateData = {"role": Constant.ROLE_TEACHER};
           break;
-        case "Teacher":
+        case Constant.ROLE_TEACHER:
           updateData = {
-            "role": student,
+            "role": Constant.ROLE_STUDENT,
             "teid": _uid,
-            "tena": teacherName,
+            "tena": CurrentUser().name,
             "mapo": "",
             "chepo": "",
           };
           break;
       }
-      await doc.reference.set(updateData, SetOptions(merge: true));
+      await doc.reference.update(updateData);
 
       listUsers.add(AppUser(
         id: doc.id,
         email: email,
-        techerId: _uid,
-        techerName: teacherName,
+        teacherID: _uid,
+        teacherName: CurrentUser().name,
         role: updateData["role"],
         uid: doc.get("uid"),
         name: doc.get("na"),
@@ -127,18 +119,18 @@ class UserListPageController extends ChangeNotifier {
       String? mapo,
       String? chepo}) async {
     Map<String, dynamic> dataUpdate = {"na": name};
-    if (role == student) {
+    if (role == Constant.ROLE_STUDENT) {
       dataUpdate['mapo'] = mapo;
       dataUpdate['chepo'] = chepo;
     }
-    if (role == teacher) {
+    if (role == Constant.ROLE_TEACHER) {
       DocumentSnapshot snapshot = await db.collection('appusers').doc(id).get();
       String teachername = snapshot.get('na');
 
       db
           .collection("appusers")
-          .where('role', isEqualTo: "Student")
-          .where('tena', isEqualTo: teachername)
+          .where('teid', isEqualTo: "Student")
+          
           .get()
           .then((querySnapshot) {
         for (var doc in querySnapshot.docs) {
@@ -153,7 +145,7 @@ class UserListPageController extends ChangeNotifier {
     for (var user in listUsers) {
       if (user.id == id) {
         user.name = name;
-        if (role == student) {
+        if (role == Constant.ROLE_STUDENT) {
           user.mathpoint = mapo;
           user.chemistpoint = chepo;
         }
@@ -168,12 +160,12 @@ class UserListPageController extends ChangeNotifier {
     required String role,
   }) async {
     deleteFields(id, fieldsToDelete);
-    if (role == teacher) {
+    if (role == Constant.ROLE_TEACHER) {
       DocumentSnapshot snapshot = await db.collection('appusers').doc(id).get();
       String teacherName = snapshot.get('na');
       db
           .collection("appusers")
-          .where("role", isEqualTo: student)
+          .where("role", isEqualTo: Constant.ROLE_STUDENT)
           .where("tena", isEqualTo: teacherName)
           .get()
           .then((snapshot) {
@@ -197,7 +189,7 @@ class UserListPageController extends ChangeNotifier {
   void filterByTeacherName(String teName) {
     _filteredUsers = listUsers
         .where((user) =>
-            user.techerName!.toLowerCase().contains(teName.toLowerCase()))
+            user.teacherName!.toLowerCase().contains(teName.toLowerCase()))
         .toList();
     notifyListeners();
   }

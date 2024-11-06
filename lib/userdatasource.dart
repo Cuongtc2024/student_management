@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/appuser.dart';
-import 'package:flutter_datatable/currentuser.dart';
-import 'package:flutter_datatable/userdetailsdialog.dart';
-import 'package:flutter_datatable/userlistpagecontroller.dart';
+import 'package:flutter_datatable/modal/appuser.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
+import 'package:flutter_datatable/view/userdetailsdialog.dart';
+import 'package:flutter_datatable/controller/userlistpagecontroller.dart';
 
 class UserDataSource extends DataTableSource {
   String studentList = "Student List";
@@ -53,7 +53,7 @@ class UserDataSource extends DataTableSource {
         style: TextStyle(color: Colors.black),
       )),
       DataCell(Text(
-        st.techerName.toString(),
+        st.teacherName.toString(),
         style: TextStyle(color: Colors.black),
       )),
       if (_role == teacher) callUserDetailsDialog(index)

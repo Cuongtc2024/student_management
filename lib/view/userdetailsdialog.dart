@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/currentuser.dart';
-import 'package:flutter_datatable/userlistpagecontroller.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
+import 'package:flutter_datatable/controller/userlistpagecontroller.dart';
 
 
 // ignore: must_be_immutable

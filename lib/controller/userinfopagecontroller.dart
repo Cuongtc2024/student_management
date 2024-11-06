@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_datatable/appuser.dart';
-import 'package:flutter_datatable/currentuser.dart';
+import 'package:flutter_datatable/modal/appuser.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
 
 class UserInfoPageController extends ChangeNotifier {
   final TextEditingController nameController = TextEditingController();  
@@ -18,8 +18,8 @@ class UserInfoPageController extends ChangeNotifier {
       for (var docUser in snapshot.docs) {
         AppUser appUser = AppUser(
           id: docUser.id,
-          techerId: docUser.data()["teid"],
-          techerName: docUser.data()["tena"],
+          teacherID: docUser.data()["teid"],
+          teacherName: docUser.data()["tena"],
           role: docUser.data()["role"],
           uid: docUser.data()["uid"],
           email: docUser.data()["email"],

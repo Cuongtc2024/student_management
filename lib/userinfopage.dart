@@ -25,8 +25,8 @@ class UserInfoPage extends StatelessWidget {
                   child: Column(
                     children: [
                       Consumer<UserInfoPageController>(
-                        builder: (context, controller, child) => Column(                          
-                          children: [                                                       
+                        builder: (context, controller, child) => Column(
+                          children: [
                             DataTable(
                               columns: [
                                 DataColumn(
@@ -41,26 +41,31 @@ class UserInfoPage extends StatelessWidget {
                                   'Email',
                                   style: TextStyle(color: Colors.white),
                                 ))),
-                                if(role == "Student") ...[
+                                if (role == "Student") ...[
                                   DataColumn(
-                                    label: Expanded(
-                                        child: Text(
-                                  'Điểm Toán',
-                                  style: TextStyle(color: Colors.white),
-                                ))),
+                                      label: Expanded(
+                                          child: Text(
+                                    'Điểm Toán',
+                                    style: TextStyle(color: Colors.white),
+                                  ))),
+                                  DataColumn(
+                                      label: Expanded(
+                                          child: Text(
+                                    'Điểm Hóa',
+                                    style: TextStyle(color: Colors.white),
+                                  ))),
+                                  DataColumn(
+                                      label: Expanded(
+                                          child: Text(
+                                    'Giáo viên',
+                                    style: TextStyle(color: Colors.white),
+                                  ))),
+                                ],
                                 DataColumn(
-                                    label: Expanded(
-                                        child: Text(
-                                  'Điểm Hóa',
-                                  style: TextStyle(color: Colors.white),
-                                ))),
-                                DataColumn(
-                                    label: Expanded(
-                                        child: Text(
-                                  'Giáo viên',
-                                  style: TextStyle(color: Colors.white),
-                                ))),
-                                ]                                
+                                    label: Text(
+                                  '',
+                                  style: TextStyle(color: Colors.black),
+                                )),
                               ],
                               rows: List<DataRow>.generate(
                                   controller.listUsers.length,
@@ -73,26 +78,65 @@ class UserInfoPage extends StatelessWidget {
                                             controller.listUsers[index].email,
                                             style: TextStyle(
                                                 color: Colors.white))),
-                                        if(role == "Student") ...[
+                                        if (role == "Student") ...[
                                           DataCell(Text(
-                                            controller.listUsers[index].mathpoint
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.white))),
-                                        DataCell(Text(
-                                            controller.listUsers[index].chemistpoint
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.white))),
-                                        DataCell(Text(
-                                            controller
-                                                .listUsers[index].techerName
-                                                .toString(),
-                                            style: TextStyle(
-                                                color: Colors.white))),
-                                        ]                                        
-                                      ])
-                                      ),
+                                              controller
+                                                  .listUsers[index].mathpoint
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white))),
+                                          DataCell(Text(
+                                              controller
+                                                  .listUsers[index].chemistpoint
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white))),
+                                          DataCell(Text(
+                                              controller
+                                                  .listUsers[index].techerName
+                                                  .toString(),
+                                              style: TextStyle(
+                                                  color: Colors.white))),
+                                        ],
+                                        DataCell(Row(
+                                          children: [
+                                            IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (BuildContext
+                                                          context) {
+                                                        return AlertDialog(
+                                                            title: Text(
+                                                                'Nhập thông tin'),
+                                                            content: Column(
+                                                                mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .min,
+                                                                children: [
+                                                                  TextField(
+                                                                    controller:
+                                                                        controller.nameController,
+                                                                    decoration: InputDecoration(
+                                                                        labelText:
+                                                                            'Name'),
+                                                                  ),                                                                  
+                                                                  ElevatedButton(
+                                                                    onPressed: () =>
+                                                                        controller
+                                                                            .editInfoUser(id: controller.listUsers[index].id,
+                                                                            name: controller.nameController.text),
+                                                                    child: Text(
+                                                                        'Save'),
+                                                                  ),
+                                                                ]));
+                                                      });
+                                                },
+                                                icon: const Icon(Icons.edit,
+                                                    color: Colors.black)),
+                                          ],
+                                        ))
+                                      ])),
                             ),
                           ],
                         ),

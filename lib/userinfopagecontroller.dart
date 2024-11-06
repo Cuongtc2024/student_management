@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datatable/appuser.dart';
+import 'package:flutter_datatable/currentuser.dart';
 
 class UserInfoPageController extends ChangeNotifier {
+  final TextEditingController nameController = TextEditingController();  
   final db = FirebaseFirestore.instance;
-  String? currentUid = FirebaseAuth.instance.currentUser?.uid;
   final List<AppUser> listUsers = [];
 
   UserInfoPageController() {
     db
         .collection("appusers")
-        .where("uid", isEqualTo: currentUid)
+        .where("uid", isEqualTo: CurrentUser().uid)
         .get()
         .then((snapshot) {
       listUsers.clear();
@@ -33,5 +33,35 @@ class UserInfoPageController extends ChangeNotifier {
     })
         // ignore: invalid_return_type_for_catch_error
         .catchError((error) => print("Error completing: $error"));
+  }
+
+  Future<void> editInfoUser({
+    required String id,
+    required String name,}) async {
+    if (CurrentUser().role == "Teacher") {
+      DocumentSnapshot snapshot = await db.collection('appusers').doc(id).get();
+      String teachername = snapshot.get('na');
+
+      db
+          .collection("appusers")
+          .where('role', isEqualTo: "Student")
+          .where('tena', isEqualTo: teachername)
+          .get()
+          .then((querySnapshot) {
+        for (var doc in querySnapshot.docs) {
+          doc.reference.update({
+            "tena": name,
+          });
+        }
+      });
+    }
+
+    await db.collection("appusers").doc(id).update({"na": name});
+
+    for (var user in listUsers) {
+      user.name = name;
+    }
+
+    notifyListeners();
   }
 }

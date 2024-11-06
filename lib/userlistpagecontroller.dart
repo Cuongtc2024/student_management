@@ -7,35 +7,31 @@ import 'package:flutter/material.dart';
 import 'package:flutter_datatable/appuser.dart';
 import 'package:flutter_datatable/currentuser.dart';
 
-class UserPageController extends ChangeNotifier {
+class UserListPageController extends ChangeNotifier {
   final db = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
   final List<AppUser> listUsers = [];
   final TextEditingController teacherNameToFilterController =
       TextEditingController();
 
-  String? uidOfCurrentUser;
-  String? roleOfCurrentUser;
+  String? _uid;
+  String? _role;
   List<AppUser> _filteredUsers = [];
   List<AppUser> get filteredUsers => _filteredUsers;
+  List<String> fieldsToDelete = ["role", "teid", "tena", "mapo", "chepo"];
 
   String studentList = "Student List";
   String teacherList = "Teacher List";
   String student = "Student";
   String principal = "Principal";
   String teacher = "Teacher";
-  List<String> fieldsToDelete = ["role", "teid", "tena", "mapo", "chepo"];
+  
 
-  UserPageController() {
-    uidOfCurrentUser = FirebaseAuth.instance.currentUser?.uid;
-    roleOfCurrentUser = CurrentUser().role;
-    print("role2$roleOfCurrentUser");
+  UserListPageController() {
+    _uid = CurrentUser().uid;
+    _role = CurrentUser().role;
+    print("role2$_role");
     _filteredUsers = listUsers;
-  }
-
-  Future<void> getNameOfUserList(String nameOfUserList) async {
-    String selectedNameOfUserList = nameOfUserList;
-    await getListUser(selectedNameOfUserList);
   }
 
   Future<void> getListUser(String selectedNameOfUserList) async {
@@ -59,15 +55,15 @@ class UserPageController extends ChangeNotifier {
             );
 
             // Kiểm tra điều kiện và thêm vào danh sách nếu phù hợp
-            if ((roleOfCurrentUser == principal &&
+            if ((_role == principal &&
                     selectedNameOfUserList == studentList &&
                     appUser.role == student) ||
-                (roleOfCurrentUser == principal &&
+                (_role == principal &&
                     selectedNameOfUserList == teacherList &&
                     appUser.role == teacher) ||
-                (roleOfCurrentUser == teacher &&
+                (_role == teacher &&
                     appUser.role == student &&
-                    appUser.techerId == uidOfCurrentUser)) {
+                    appUser.techerId == _uid)) {
               listUsers.add(appUser);
             }
           }
@@ -78,26 +74,14 @@ class UserPageController extends ChangeNotifier {
         .catchError((error) => print("Error completing: $error"));
   }
 
-  Future<void> logout(BuildContext context) async {
-    try {
-      await auth.signOut();
-      CurrentUser().uid = null;
-      CurrentUser().role = null;
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Đăng xuất thất bại: $e')),
-      );
-    }
-  }
-
   Future<void> addAppUser(BuildContext context, {required String email}) async {
     String? teacherName;
     Map<String, dynamic> updateData = {};
 
-    if (roleOfCurrentUser == teacher) {
+    if (_role == teacher) {
       QuerySnapshot snapshot = await db
           .collection('appusers')
-          .where('uid', isEqualTo: uidOfCurrentUser)
+          .where('uid', isEqualTo: _uid)
           .get();
       teacherName = snapshot.docs.first.get('na');
     }
@@ -105,14 +89,14 @@ class UserPageController extends ChangeNotifier {
     QuerySnapshot snapshot =
         await db.collection('appusers').where('email', isEqualTo: email).get();
     for (var doc in snapshot.docs) {
-      switch (roleOfCurrentUser) {
+      switch (_role) {
         case "Principal":
           updateData = {"role": teacher};
           break;
         case "Teacher":
           updateData = {
             "role": student,
-            "teid": uidOfCurrentUser,
+            "teid": _uid,
             "tena": teacherName,
             "mapo": "",
             "chepo": "",
@@ -124,7 +108,7 @@ class UserPageController extends ChangeNotifier {
       listUsers.add(AppUser(
         id: doc.id,
         email: email,
-        techerId: uidOfCurrentUser,
+        techerId: _uid,
         techerName: teacherName,
         role: updateData["role"],
         uid: doc.get("uid"),
@@ -134,91 +118,6 @@ class UserPageController extends ChangeNotifier {
       ));
     }
     notifyListeners();
-
-    // QuerySnapshot snapshot = await db
-    //     .collection('appusers')
-    //     .where('uid', isEqualTo: uidOfCurrentUser)
-    //     .get();
-    // String teacherName = snapshot.docs.first.get('na');
-    // db
-    //     .collection("appusers")
-    //     .where('email', isEqualTo: email)
-    //     .get()
-    //     .then((snapshot) {
-    //   for (var doc in snapshot.docs) {
-    //     switch (roleOfCurrentUser) {
-    //       case "Principal":
-    //         doc.reference.update({
-    //           "role": teacher,
-    //         });
-    //         // listUsers.add(AppUser(
-    //         //     id: doc.id,
-    //         //     role: teacher,
-    //         //     email: email,
-    //         //     uid: doc.data()["uid"],
-    //         //     name: doc.data()["na"]));
-    //         break;
-    //       case "Teacher":
-    //         doc.reference.set({
-    //           "role": student,
-    //           "teid": uidOfCurrentUser,
-    //           "tena": teacherName,
-    //           "mapo": "",
-    //           "chepo": "",
-    //         }, SetOptions(merge: true));
-    //         // listUsers.add(AppUser(
-    //         //     id: doc.id,
-    //         //     role: student,
-    //         //     email: email,
-    //         //     techerId: uidOfCurrentUser,
-    //         //     techerName: teacherName,
-    //         //     uid: doc.data()["uid"],
-    //         //     name: doc.data()["na"],
-    //         //     mathpoint: "",
-    //         //     chemistpoint: "",
-    //         //     ));
-    //         break;
-    //     }
-    //     listUsers.add(AppUser(
-    //             id: doc.id,
-    //             email: email,
-    //             techerId: uidOfCurrentUser,
-    //             techerName: teacherName,
-    //             role: doc.data()["role"],
-    //             uid: doc.data()["uid"],
-    //             name: doc.data()["na"],
-    //             mathpoint: "",
-    //             chemistpoint: "",
-    //             ));
-    //   }
-    //   notifyListeners();
-    // });
-
-    //  db
-    //       .collection("appusers")
-    //       .where('email', isEqualTo: email)
-    //       .get()
-    //       .then((querySnapshot) {
-    //     for (var doc in querySnapshot.docs) {
-    //       switch (roleOfCurrentUser) {
-    //         case "Principal":
-    //           doc.reference.update({
-    //             "role": teacher,
-    //           });
-    //           break;
-    //         case "Teacher":
-    //           doc.reference.set({
-    //             "role": "Student",
-    //             "teid": uidOfCurrentUser,
-    //             "tena": teachername,
-    //             "mapo": "",
-    //             "chepo": "",
-    //           }, SetOptions(merge: true));
-    //           break;
-    //       }
-    //     }
-    //     notifyListeners();
-    //   });
   }
 
   Future<void> editAppUser(
@@ -262,34 +161,6 @@ class UserPageController extends ChangeNotifier {
     }
 
     notifyListeners();
-    // switch (role) {
-    //   case "Student":
-    //     db
-    //         .collection("appusers")
-    //         .doc(id)
-    //         .update({"mapo": mapo, "na": name, "chepo": chepo});
-    //     break;
-    //   case "Teacher":
-    //     DocumentSnapshot snapshot =
-    //         await db.collection('appusers').doc(id).get();
-    //     String teachername = snapshot.get('na');
-    //     db.collection("appusers").doc(id).update({
-    //       "na": name,
-    //     });
-    //     db
-    //         .collection("appusers")
-    //         .where('role', isEqualTo: "Student")
-    //         .where('tena', isEqualTo: teachername)
-    //         .get()
-    //         .then((querySnapshot) {
-    //       for (var doc in querySnapshot.docs) {
-    //         doc.reference.update({
-    //           "tena": name,
-    //         });
-    //       }
-    //     });
-    //     break;
-    // }
   }
 
   Future<void> deleteAppUser({

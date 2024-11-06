@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_datatable/appuser.dart';
+import 'package:flutter_datatable/currentuser.dart';
 import 'package:flutter_datatable/userdetailsdialog.dart';
-import 'package:flutter_datatable/userpagecontroller.dart';
+import 'package:flutter_datatable/userlistpagecontroller.dart';
 
 class UserDataSource extends DataTableSource {
   String studentList = "Student List";
@@ -9,15 +10,19 @@ class UserDataSource extends DataTableSource {
   String student = "Student";
   String principal = "Principal";
   String teacher = "Teacher";
+
+  String? _role;
   final String listName;
   final List<AppUser> list;
   final BuildContext context;
-  final UserPageController controller;
+  final UserListPageController controller;
   UserDataSource(
       {required this.list,
       required this.controller,
       required this.context,
-      required this.listName});
+      required this.listName}){
+        _role = CurrentUser().role;
+      }
 
   @override
   DataRow? getRow(int index) {
@@ -51,7 +56,7 @@ class UserDataSource extends DataTableSource {
         st.techerName.toString(),
         style: TextStyle(color: Colors.black),
       )),
-      if (controller.roleOfCurrentUser == teacher) callUserDetailsDialog(index)
+      if (_role == teacher) callUserDetailsDialog(index)
     ]);
   }
 
@@ -65,7 +70,7 @@ class UserDataSource extends DataTableSource {
         st.email,
         style: TextStyle(color: Colors.black),
       )),
-      if (controller.roleOfCurrentUser == principal)
+      if (_role == principal)
         callUserDetailsDialog(index)
     ]);
   }

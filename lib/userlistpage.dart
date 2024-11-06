@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datatable/currentuser.dart';
 import 'package:flutter_datatable/userdatasource.dart';
 import 'package:flutter_datatable/userdetailsdialog.dart';
-import 'package:flutter_datatable/userpagecontroller.dart';
+import 'package:flutter_datatable/userlistpagecontroller.dart';
 import 'package:provider/provider.dart';
-
 
 class UserListPage extends StatelessWidget {
   String studentList = "Student List";
@@ -11,9 +11,14 @@ class UserListPage extends StatelessWidget {
   String student = "Student";
   String principal = "Principal";
   String teacher = "Teacher";
+
   String listName;
-  final UserPageController controller;
-  UserListPage({super.key, required this.listName, required this.controller});
+  String? _role;
+  UserListPageController controller = UserListPageController();
+  UserListPage({super.key, required this.listName}) {
+    _role = CurrentUser().role;
+    controller.getListUser(listName);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,11 +39,11 @@ class UserListPage extends StatelessWidget {
                   width: 800,
                   child: Column(
                     children: [
-                      Consumer<UserPageController>(
+                      Consumer<UserListPageController>(
                         builder: (context, controller, child) =>
                             listName == studentList
-                                ? buildStudentPage(controller, context)
-                                : buildTeacherPage(controller, context),
+                                ? buildStudentPage(context)
+                                : buildTeacherPage(context),
                       )
                     ],
                   )),
@@ -49,32 +54,32 @@ class UserListPage extends StatelessWidget {
     );
   }
 
-  Column buildStudentPage(UserPageController controller, BuildContext context) {
+  Column buildStudentPage(BuildContext context) {
     return Column(
       children: [
-        if (controller.roleOfCurrentUser == principal)
-        // Row(
-        //   children: [
-        //     TextField(
-        //             style: TextStyle(color: Colors.white),
-        //             decoration: InputDecoration(
-        //                 labelText: 'Nhập tên giáo viên',
-        //                 labelStyle: TextStyle(color: Colors.white)),
-        //             controller: controller.teacherNameToFilterController,
-        //             ),
-        //     IconButton(              
-        //       onPressed: controller., 
-        //       icon: Icon(Icons.search))
-        //   ],
-        // ),
-        TextField(
-                style: TextStyle(color: Colors.white),
-                decoration: InputDecoration(
-                    labelText: 'Nhập tên giáo viên',
-                    labelStyle: TextStyle(color: Colors.white)),
-                onChanged: (value) {
-                  controller.filterByTeacherName(value);
-                }),
+        if (_role == principal)
+          // Row(
+          //   children: [
+          //     TextField(
+          //             style: TextStyle(color: Colors.white),
+          //             decoration: InputDecoration(
+          //                 labelText: 'Nhập tên giáo viên',
+          //                 labelStyle: TextStyle(color: Colors.white)),
+          //             controller: controller.teacherNameToFilterController,
+          //             ),
+          //     IconButton(
+          //       onPressed: controller.,
+          //       icon: Icon(Icons.search))
+          //   ],
+          // ),
+          TextField(
+              style: TextStyle(color: Colors.white),
+              decoration: InputDecoration(
+                  labelText: 'Nhập tên giáo viên',
+                  labelStyle: TextStyle(color: Colors.white)),
+              onChanged: (value) {
+                controller.filterByTeacherName(value);
+              }),
         PaginatedDataTable(
             columns: [
               DataColumn(
@@ -107,7 +112,7 @@ class UserListPage extends StatelessWidget {
                 'Giáo viên',
                 style: TextStyle(color: Colors.black),
               ))),
-              if (controller.roleOfCurrentUser == teacher)
+              if (_role == teacher)
                 DataColumn(
                     label: Text(
                   '',
@@ -121,13 +126,12 @@ class UserListPage extends StatelessWidget {
                 context: context),
             rowsPerPage: 2,
             showCheckboxColumn: true),
-        if (controller.roleOfCurrentUser == teacher)
-          buildAddNewUserDialog(controller),
+        if (_role == teacher) buildAddNewUserDialog(),
       ],
     );
   }
 
-  Column buildTeacherPage(UserPageController controller, BuildContext context) {
+  Column buildTeacherPage(BuildContext context) {
     return Column(
       children: [
         PaginatedDataTable(
@@ -144,7 +148,7 @@ class UserListPage extends StatelessWidget {
                 'Email',
                 style: TextStyle(color: Colors.black),
               ))),
-              if (controller.roleOfCurrentUser == principal)
+              if (_role == principal)
                 DataColumn(
                     label: Text(
                   '',
@@ -158,13 +162,12 @@ class UserListPage extends StatelessWidget {
                 context: context),
             rowsPerPage: 2,
             showCheckboxColumn: true),
-        if (controller.roleOfCurrentUser == principal)
-          buildAddNewUserDialog(controller),
+        if (_role == principal) buildAddNewUserDialog(),
       ],
     );
   }
 
-  Builder buildAddNewUserDialog(UserPageController controller) {
+  Builder buildAddNewUserDialog() {
     return Builder(
       builder: (context) => Container(
         height: 35,
@@ -178,7 +181,6 @@ class UserListPage extends StatelessWidget {
                 showDialog(
                     context: context,
                     builder: (BuildContext context) => UserDetailsDialog(
-                          roleOfCurrentUser: controller.roleOfCurrentUser,
                           controller: controller,
                         ));
               },
@@ -204,7 +206,7 @@ class UserListPage extends StatelessWidget {
     );
   }
 }
- 
+
 //   @override
 //   Widget build(BuildContext context) {
 //     return Scaffold(

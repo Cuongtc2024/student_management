@@ -4,7 +4,7 @@ import 'package:flutter_datatable/currentuser.dart';
 import 'package:flutter_datatable/userlistpage.dart';
 import 'package:flutter_datatable/loginuserpage.dart';
 import 'package:flutter_datatable/userinfopage.dart';
-import 'package:flutter_datatable/userpagecontroller.dart';
+import 'package:flutter_datatable/usermenupagecontroller.dart';
 
 class UserMenuPage extends StatelessWidget {
   String studentList = "Student List";
@@ -12,11 +12,13 @@ class UserMenuPage extends StatelessWidget {
   String student = "Student";
   String principal = "Principal";
   String teacher = "Teacher";
-String? _role ;
- 
-  UserPageController controller = UserPageController();
+  String? _role;
 
-  UserMenuPage({super.key, }){
+  UserMenuPageController controller = UserMenuPageController();
+
+  UserMenuPage({
+    super.key,
+  }) {
     _role = CurrentUser().role;
   }
 
@@ -58,8 +60,7 @@ String? _role ;
             ),
             if ((_role == teacher) || (_role == principal))
               buildStudentPage(context),
-            if (_role == principal)
-              buildTeacherPage(context),
+            if (_role == principal) buildTeacherPage(context),
             ListTile(
               leading: Icon(Icons.logout),
               title: Text('Đăng xuất'),
@@ -93,41 +94,39 @@ String? _role ;
 
   ListTile buildTeacherPage(BuildContext context) {
     return ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Danh sách giáo viên"),
-              onTap: () {
-                Navigator.pop(context); // Đóng Drawer
-                controller.getNameOfUserList(teacherList);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserListPage(
-                      listName: teacherList,
-                      controller: controller,
-                    ),
-                  ),
-                );
-              },
-            );
+      leading: Icon(Icons.info),
+      title: Text("Danh sách giáo viên"),
+      onTap: () {
+        Navigator.pop(context); // Đóng Drawer
+        // controller.getNameOfUserList(teacherList);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UserListPage(
+              listName: teacherList,
+            ),
+          ),
+        );
+      },
+    );
   }
 
   ListTile buildStudentPage(BuildContext context) {
     return ListTile(
-              leading: Icon(Icons.info),
-              title: Text("Danh sách sinh viên"),
-              onTap: () async {
-                Navigator.pop(context); // Đóng Drawer
-                controller.getNameOfUserList(studentList);
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => UserListPage(
-                      listName: studentList,
-                      controller: controller,
-                    ),
-                  ),
-                );
-              },
-            );
+      leading: Icon(Icons.info),
+      title: Text("Danh sách sinh viên"),
+      onTap: () async {
+        Navigator.pop(context); // Đóng Drawer
+        // controller.getNameOfUserList(studentList);
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => UserListPage(
+              listName: studentList,
+            ),
+          ),
+        );
+      },
+    );
   }
 }

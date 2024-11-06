@@ -24,6 +24,7 @@ class MainController extends ChangeNotifier {
           .get();
         _roleOfCurrentUser = snapshot.docs.first.get('role');        
     }
+    print("MainController");
     notifyListeners();
   });  
   }

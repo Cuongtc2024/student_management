@@ -5,12 +5,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_datatable/appuser.dart';
+import 'package:flutter_datatable/currentuser.dart';
 
 class UserPageController extends ChangeNotifier {
   final db = FirebaseFirestore.instance;
   final FirebaseAuth auth = FirebaseAuth.instance;
   final List<AppUser> listUsers = [];
-  final TextEditingController teacherNameToFilterController = TextEditingController();
+  final TextEditingController teacherNameToFilterController =
+      TextEditingController();
 
   String? uidOfCurrentUser;
   String? roleOfCurrentUser;
@@ -22,25 +24,18 @@ class UserPageController extends ChangeNotifier {
   String student = "Student";
   String principal = "Principal";
   String teacher = "Teacher";
-  List<String> fieldsToDelete = ["role", "teid", "tena", "mapo", "chepo"];  
+  List<String> fieldsToDelete = ["role", "teid", "tena", "mapo", "chepo"];
 
   UserPageController() {
     uidOfCurrentUser = FirebaseAuth.instance.currentUser?.uid;
-    getRoleOfCurrentUser();
+    roleOfCurrentUser = CurrentUser().role;
+    print("role2$roleOfCurrentUser");
     _filteredUsers = listUsers;
   }
 
   Future<void> getNameOfUserList(String nameOfUserList) async {
     String selectedNameOfUserList = nameOfUserList;
     await getListUser(selectedNameOfUserList);
-  }
-
-  Future<void> getRoleOfCurrentUser() async {
-    QuerySnapshot snapshot = await db
-        .collection('appusers')
-        .where('uid', isEqualTo: uidOfCurrentUser)
-        .get();
-    roleOfCurrentUser = snapshot.docs.first.get('role');
   }
 
   Future<void> getListUser(String selectedNameOfUserList) async {
@@ -76,6 +71,7 @@ class UserPageController extends ChangeNotifier {
               listUsers.add(appUser);
             }
           }
+          print("getListUser");
           notifyListeners();
         })
         // ignore: invalid_return_type_for_catch_error
@@ -85,6 +81,8 @@ class UserPageController extends ChangeNotifier {
   Future<void> logout(BuildContext context) async {
     try {
       await auth.signOut();
+      CurrentUser().uid = null;
+      CurrentUser().role = null;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Đăng xuất thất bại: $e')),
@@ -233,11 +231,11 @@ class UserPageController extends ChangeNotifier {
     if (role == student) {
       dataUpdate['mapo'] = mapo;
       dataUpdate['chepo'] = chepo;
-    }    
+    }
     if (role == teacher) {
       DocumentSnapshot snapshot = await db.collection('appusers').doc(id).get();
       String teachername = snapshot.get('na');
-      
+
       db
           .collection("appusers")
           .where('role', isEqualTo: "Student")
@@ -258,10 +256,9 @@ class UserPageController extends ChangeNotifier {
         user.name = name;
         if (role == student) {
           user.mathpoint = mapo;
-          user.chemistpoint = chepo;          
+          user.chemistpoint = chepo;
         }
-      } 
-      
+      }
     }
 
     notifyListeners();
@@ -310,16 +307,14 @@ class UserPageController extends ChangeNotifier {
           .get()
           .then((snapshot) {
         for (var doc in snapshot.docs) {
-          deleteFields(doc.id, fieldsToDelete);          
+          deleteFields(doc.id, fieldsToDelete);
         }
       });
-    }    
+    }
     listUsers.removeWhere((user) => user.id == id);
     notifyListeners();
-    
   }
 
-  
   // void filterByTeacherName({required String teacherNameToFilter}) {
   //   _filteredUsers = listUsers
   //       .where((user) =>

@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datatable/currentuser.dart';
 
 class LoginUserPageController extends ChangeNotifier {
   final db = FirebaseFirestore.instance;
@@ -12,7 +13,7 @@ class LoginUserPageController extends ChangeNotifier {
   String? _roleOfCurrentUser;
   String? get roleOfCurrentUser => _roleOfCurrentUser;
 
-  Future<void> login(BuildContext context) async {
+  Future<String> login(BuildContext context) async {
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
         email: emailController.text,
@@ -24,12 +25,17 @@ class LoginUserPageController extends ChangeNotifier {
             .collection('appusers')
             .where('uid', isEqualTo: user.uid)
             .get();
-        _roleOfCurrentUser = snapshot.docs.first.get('role');
+        CurrentUser().uid = user.uid;
+        CurrentUser().role = snapshot.docs.first.get('role');
+        print('role1' +  CurrentUser().role!);
       }
+      return "";
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Đăng nhập thất bại: $e')),
-      );
+      if (e is FirebaseAuthException) {
+        return "Loi dang nhap";
+      } else {
+        return "Ko truy xuat dc database";
+      }
     }
   }
 }

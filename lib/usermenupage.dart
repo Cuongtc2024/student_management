@@ -1,5 +1,6 @@
 // import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datatable/currentuser.dart';
 import 'package:flutter_datatable/userlistpage.dart';
 import 'package:flutter_datatable/loginuserpage.dart';
 import 'package:flutter_datatable/userinfopage.dart';
@@ -11,11 +12,13 @@ class UserMenuPage extends StatelessWidget {
   String student = "Student";
   String principal = "Principal";
   String teacher = "Teacher";
-
-  String? role;
+String? _role ;
+ 
   UserPageController controller = UserPageController();
 
-  UserMenuPage({super.key, required this.role});
+  UserMenuPage({super.key, }){
+    _role = CurrentUser().role;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,14 +51,14 @@ class UserMenuPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => UserInfoPage(role: role),
+                    builder: (context) => UserInfoPage(role: _role),
                   ),
                 );
               },
             ),
-            if ((role == teacher) || (role == principal))
+            if ((_role == teacher) || (_role == principal))
               buildStudentPage(context),
-            if (role == principal)
+            if (_role == principal)
               buildTeacherPage(context),
             ListTile(
               leading: Icon(Icons.logout),

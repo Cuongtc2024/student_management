@@ -7,14 +7,9 @@ import 'package:flutter_datatable/registerpage.dart';
 import 'package:flutter_datatable/usermenupage.dart';
 
 // ignore: must_be_immutable
-class LoginUserPage extends StatefulWidget {
-  const LoginUserPage({super.key});
+class LoginUserPage extends StatelessWidget {
+  LoginUserPage({super.key});
 
-  @override
-  State<LoginUserPage> createState() => _LoginUserPageState();
-}
-
-class _LoginUserPageState extends State<LoginUserPage> {
   LoginUserPageController controller = LoginUserPageController();
 
   @override
@@ -51,14 +46,20 @@ class _LoginUserPageState extends State<LoginUserPage> {
                             labelStyle: TextStyle(color: Colors.white)),
                       ),
                       TextButton(
-                          onPressed: () {
-                            controller.login(context);
-                            Navigator.pushReplacement(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => UserMenuPage(
-                                        role: controller.roleOfCurrentUser)),
-                            );
+                          onPressed: () async {
+                            final result = await controller.login(context);
+                            if (result.isEmpty) {
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => UserMenuPage(
+                                        )),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(result)),
+                              );
+                            }
                           },
                           child: Text(
                             'Đăng nhập',

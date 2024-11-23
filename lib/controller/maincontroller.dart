@@ -6,18 +6,19 @@ import 'package:flutter_datatable/manager/currentuser.dart';
 class MainController extends ChangeNotifier {
   bool isLoggedIn = false;
 
+  final db = FirebaseFirestore.instance;
+
   MainController() {
     FirebaseAuth.instance.authStateChanges().listen((User? user) async {
       if (user == null) {
         isLoggedIn = false;
       } else {
         isLoggedIn = true;
-        QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection('appusers')
-            .where('uid', isEqualTo: user.uid)
-            .get();
-        CurrentUser().role = snapshot.docs.first.get('role');
+        DocumentSnapshot snapshot =
+            await db.collection('appusers').doc(user.uid).get();
         CurrentUser().uid = user.uid;
+        CurrentUser().name = snapshot.get('na');
+        CurrentUser().role = snapshot.get('role');
       }
       print("MainController");
       notifyListeners();

@@ -1,0 +1,1 @@
+enum IsStatusPage { nextpage, previouspage, firstpage, lastpage }

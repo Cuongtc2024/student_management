@@ -1,7 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datatable/view/usermenupage.dart';
-
 import 'package:flutter_datatable/firebase_options.dart';
 import 'package:flutter_datatable/controller/maincontroller.dart';
 import 'package:provider/provider.dart';
@@ -22,7 +21,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(value: controller,
-      child: Consumer<MainController>(builder: (context, controller, child) => MaterialApp(
+      child: Consumer<MainController>(builder: (context, controller, child) {        
+        return MaterialApp(
           title: 'Cuong App',
           theme: ThemeData(
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
@@ -30,7 +30,8 @@ class MyApp extends StatelessWidget {
           ),
            home: controller.isLoggedIn ? UserMenuPage() : LoginUserPage(),
           
-        ),
+        );
+      },
       ),
     );
   }

@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter_datatable/constant/constant.dart';
 import 'package:flutter_datatable/controller/userinfopagecontroller.dart';
+import 'package:flutter_datatable/manager/currentuser.dart';
+
+
 import 'package:provider/provider.dart';
 
 class UserInfoPage extends StatelessWidget {
-  String? role;
+  final _role = CurrentUser().role;
   UserInfoPageController controller = UserInfoPageController();
-  UserInfoPage({super.key, required this.role});
+  UserInfoPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +44,7 @@ class UserInfoPage extends StatelessWidget {
                                   'Email',
                                   style: TextStyle(color: Colors.white),
                                 ))),
-                                if (role == "Student") ...[
+                                if (_role == Constant.ROLE_STUDENT) ...[
                                   DataColumn(
                                       label: Expanded(
                                           child: Text(
@@ -78,7 +81,7 @@ class UserInfoPage extends StatelessWidget {
                                             controller.listUsers[index].email,
                                             style: TextStyle(
                                                 color: Colors.white))),
-                                        if (role == "Student") ...[
+                                        if (_role == Constant.ROLE_STUDENT) ...[
                                           DataCell(Text(
                                               controller
                                                   .listUsers[index].mathpoint
@@ -102,6 +105,7 @@ class UserInfoPage extends StatelessWidget {
                                           children: [
                                             IconButton(
                                                 onPressed: () {
+                                                  controller.setNameForEditing(index);
                                                   showDialog(
                                                       context: context,
                                                       builder: (BuildContext
@@ -133,7 +137,7 @@ class UserInfoPage extends StatelessWidget {
                                                       });
                                                 },
                                                 icon: const Icon(Icons.edit,
-                                                    color: Colors.black)),
+                                                    color: Colors.white)),
                                           ],
                                         ))
                                       ])),

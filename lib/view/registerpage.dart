@@ -36,7 +36,10 @@ class _RegisterpageState extends State<Registerpage> {
               decoration: InputDecoration(labelText: 'Name'),
             ),            
             ElevatedButton(
-              onPressed: () => controller.register(context),
+              onPressed: () {
+                controller.register(context);
+                print(123123);
+              },
               child: Text('Register'),
             ),
           ],

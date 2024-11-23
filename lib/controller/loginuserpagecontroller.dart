@@ -10,9 +10,6 @@ class LoginUserPageController extends ChangeNotifier {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  String? _roleOfCurrentUser;
-  String? get roleOfCurrentUser => _roleOfCurrentUser;
-
   Future<String> login(BuildContext context) async {
     try {
       UserCredential userCredential = await auth.signInWithEmailAndPassword(
@@ -21,15 +18,24 @@ class LoginUserPageController extends ChangeNotifier {
       );
       User? user = userCredential.user;
       if (user != null) {
-        QuerySnapshot snapshot = await FirebaseFirestore.instance
-            .collection('appusers')
-            .where('uid', isEqualTo: user.uid)
-            .get();
+        DocumentSnapshot snapshot =
+            await db.collection('appusers').doc(user.uid).get();
         CurrentUser().uid = user.uid;
-        CurrentUser().role = snapshot.docs.first.get('role');
-        CurrentUser().name = snapshot.docs.first.get('na');
-        print('role1' +  CurrentUser().role!);
+        CurrentUser().name = snapshot.get('na');
+        CurrentUser().role = snapshot.get('role');
+
+        print('role1' + CurrentUser().role!);
       }
+      // if (user != null) {
+      //   QuerySnapshot snapshot = await FirebaseFirestore.instance
+      //       .collection('appusers')
+      //       .where('uid', isEqualTo: user.uid)
+      //       .get();
+      //   CurrentUser().uid = user.uid;
+      //   CurrentUser().role = snapshot.docs.first.get('role');
+      //   CurrentUser().name = snapshot.docs.first.get('na');
+      //   print('role1' +  CurrentUser().role!);
+      // }
       return "";
     } catch (e) {
       if (e is FirebaseAuthException) {

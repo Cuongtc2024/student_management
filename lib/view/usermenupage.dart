@@ -9,14 +9,10 @@ import 'package:flutter_datatable/constant/userlisttype.dart';
 import 'package:flutter_datatable/controller/usermenupagecontroller.dart';
 
 class UserMenuPage extends StatelessWidget {
-  final String? _role = CurrentUser().role;
-
   UserMenuPageController controller = UserMenuPageController();
-
   UserMenuPage({
     super.key,
   });
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,19 +36,18 @@ class UserMenuPage extends StatelessWidget {
                   "Menu",
                   style: TextStyle(color: Colors.white),
                 )),
-            buildListTile(
-                context, "Thong tin nguoi dung", UserInfoPage(role: _role)),
-            if ((_role == Constant.ROLE_TEACHER) ||
-                (_role == Constant.ROLE_PRINCIPLE))
+            buildListTile(context, "Thong tin nguoi dung", UserInfoPage()),
+            if ((CurrentUser().role == Constant.ROLE_TEACHER) ||
+                (CurrentUser().role == Constant.ROLE_PRINCIPLE))
               buildListTile(
                   context,
                   "Danh sach sinh vien",
                   UserListPage(
-                    type: _role == "Teacher"
+                    type: CurrentUser().role == Constant.ROLE_TEACHER
                         ? UserListType.studentsofteacher
                         : UserListType.allstudents,
                   )),
-            if (_role == Constant.ROLE_PRINCIPLE)
+            if (CurrentUser().role == Constant.ROLE_PRINCIPLE)
               buildListTile(context, "Danh sach giao vien",
                   UserListPage(type: UserListType.teachers)),
             buildListTile(context, "Dang xuat", LoginUserPage())
@@ -77,8 +72,12 @@ class UserMenuPage extends StatelessWidget {
     return ListTile(
       leading: Icon(Icons.info),
       title: Text(title),
-      onTap: () {
-        Navigator.pop(context); // Đóng Drawer
+      onTap: () async {
+        Navigator.pop(context);
+        if (title == "Dang xuat") {
+          await controller.logout(context);
+        }
+
         Navigator.push(
           context,
           MaterialPageRoute(

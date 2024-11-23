@@ -2,22 +2,21 @@ class AppUser {
   String id;
   String? teacherID;
   String? teacherName;
-  String role;
+  String? role;
   String uid;
-  late String email;
-  late String? mathpoint;
-  late String? chemistpoint;
-  late String name;
-  
+  String email;
+  String? mathpoint;
+  String? chemistpoint;
+  String name;
 
-  AppUser( 
+  AppUser(
       {required this.id,
-       this.teacherID,
-       this.teacherName,
-      required this.role,
       required this.uid,
       required this.email,
       required this.name,
+      this.teacherID,
+      this.teacherName,
+      this.role,
       this.chemistpoint,
       this.mathpoint});
 }

@@ -1,7 +1,6 @@
 // ignore_for_file: use_build_context_synchronously
 
 import 'package:flutter/material.dart';
-// ignore: depend_on_referenced_packages
 import 'package:flutter_datatable/controller/loginuserpagecontroller.dart';
 import 'package:flutter_datatable/view/registerpage.dart';
 import 'package:flutter_datatable/view/usermenupage.dart';
@@ -52,8 +51,7 @@ class LoginUserPage extends StatelessWidget {
                               Navigator.pushReplacement(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => UserMenuPage(
-                                        )),
+                                    builder: (context) => UserMenuPage()),
                               );
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
@@ -84,150 +82,6 @@ class LoginUserPage extends StatelessWidget {
           )
         ],
       ),
-      // body: Row(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     Column(
-      //       children: [
-      //         Container(
-      //           padding: const EdgeInsets.all(5),
-      //           color: Colors.black,
-      //           child: SizedBox(
-      //             height: 500,
-      //             width: 1000,
-      //             child: Column(
-      //               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      //               children: [
-      //                 const Row(
-      //                   children: [
-      //                     Icon(Icons.arrow_back, color: Colors.white),
-      //                     SizedBox(
-      //                       width: 8,
-      //                     ),
-      //                     Text(
-      //                       'Nhân viên',
-      //                       style: TextStyle(color: Colors.white),
-      //                     )
-      //                   ],
-      //                 ),
-      //                 const Text(
-      //                   'Danh sách nhân viên',
-      //                   style: TextStyle(color: Colors.white),
-      //                 ),
-      //                 Consumer<UserPageController>(builder: (context, controller, child) => DataTable(
-      //                       columns: const [
-      //                         DataColumn(
-      //                             label: Text(
-      //                           'Tên',
-      //                           style: TextStyle(color: Colors.white),
-      //                         )),
-      //                         DataColumn(
-      //                             label: Text(
-      //                           'Vị trí',
-      //                           style: TextStyle(color: Colors.white),
-      //                         )),
-      //                         DataColumn(
-      //                             label: Text(
-      //                           'Ngày sinh',
-      //                           style: TextStyle(color: Colors.white),
-      //                         )),
-      //                         DataColumn(label: Text('')),
-      //                       ],
-      //                       rows: List<DataRow>.generate(
-      //                           controller.listUsers.length,
-      //                           (index) => DataRow(cells: [
-      //                                 DataCell(Text(
-      //                                     controller.listUsers[index].name,
-      //                                     style: const TextStyle(color: Colors.white),)),
-      //                                 DataCell(Text(
-      //                                     controller.listUsers[index].role,
-      //                                     style: const TextStyle(color: Colors.white),)),
-      //                                 DataCell(Text(controller
-      //                                     .listUsers[index].birthday,
-      //                                     style: const TextStyle(color: Colors.white),)),
-      //                                 DataCell(Row(
-      //                                   children: [
-      //                                     IconButton(
-      //                                         onPressed: () {
-      //                                           showDialog(
-      //                                               context: context,
-      //                                               builder: (BuildContext
-      //                                                       context) =>
-      //                                                   UserDetailsDialog(
-      //                                                       id: controller.listUsers[index].id,
-      //                                                       controller: controller,
-      //                                                       birthday:
-      //                                                           controller
-      //                                                               .listUsers[index]
-      //                                                               .birthday,
-      //                                                       name: controller
-      //                                                           .listUsers[index]
-      //                                                           .name,
-      //                                                       role: controller
-      //                                                           .listUsers[index]
-      //                                                           .role));
-      //                                         },
-      //                                         icon: const Icon(Icons.edit,
-      //                                             color: Colors.white)),
-      //                                     const SizedBox(
-      //                                       width: 8,
-      //                                     ),
-      //                                     IconButton(
-      //                                         onPressed: () {
-      //                                           controller.deleteUser(controller
-      //                                                           .listUsers[index].id);
-      //                                         },
-      //                                         icon: const Icon(Icons.delete,
-      //                                             color: Colors.red)),
-      //                                   ],
-      //                                 ))
-      //                               ]))),
-      //                 ),
-      //                 Container(
-      //                   height: 35,
-      //                   decoration: BoxDecoration(
-      //                       color: Colors.lightBlue,
-      //                       borderRadius: BorderRadius.circular(8)),
-      //                   child: Row(
-      //                     mainAxisAlignment: MainAxisAlignment.center,
-      //                     children: [
-      //                       IconButton(
-      //                         onPressed: () {
-      //                           showDialog(
-      //                               context: context,
-      //                               builder: (BuildContext context) =>
-      //                                   UserDetailsDialog(
-      //                                     controller: controller,
-      //                                   ));
-      //                         },
-      //                         //  tooltip: 'Thêm nhân viên mới',
-      //                         icon: const Row(
-      //                           children: [
-      //                             Icon(
-      //                               Icons.add,
-      //                               size: 20,
-      //                               color: Colors.white,
-      //                             ),
-      //                             SizedBox(width: 8),
-      //                             Text(
-      //                               'Thêm nhân viên mới',
-      //                               style: TextStyle(
-      //                                   color: Colors.white, fontSize: 15),
-      //                             )
-      //                           ],
-      //                         ),
-      //                       ),
-      //                     ],
-      //                   ),
-      //                 ),
-      //               ],
-      //             ),
-      //           ),
-      //         ),
-      //       ],
-      //     )
-      //   ],
-      // )
     );
   }
 }

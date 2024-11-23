@@ -6,15 +6,18 @@ import 'package:flutter_datatable/manager/currentuser.dart';
 
 class UserMenuPageController extends ChangeNotifier {
   final FirebaseAuth auth = FirebaseAuth.instance;
-
-  Future<String> logout(BuildContext context) async {
+  
+  Future<String> logout(BuildContext context,) async {
     try {
       await auth.signOut();
       CurrentUser().uid = null;
-      CurrentUser().role = null;
+      CurrentUser().role = null;   
+      CurrentUser().name = null;
+      print("object") ;        
       return "";
     } catch (e) {
       return 'Đăng xuất thất bại: $e';
     }
+    
   }
 }
